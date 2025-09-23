@@ -30,6 +30,16 @@
   "dataGroups": [
     {
       "name": "users",
+      "urls": ["https://68d222cdcc7017eec5429b8e.mockapi.io/**"],
+      "cacheConfig": {
+        "maxSize": 100,
+        "maxAge": "1h",
+        "timeout": "10s",
+        "strategy": "freshness"
+      }
+    },
+    {
+      "name": "offline-users",
       "urls": ["https://68d222cdcc7017eec5429b8e.mockapi.io/get-users"],
       "cacheConfig": {
         "maxSize": 100,

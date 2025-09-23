@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { CreateUserRequest } from '../../models/user.model';
+import { FormSubmissionService } from '../../services/form-submission.service';
 
 @Component({
     selector: 'app-create-user',
@@ -14,6 +15,7 @@ import { CreateUserRequest } from '../../models/user.model';
 })
 export class CreateUserComponent {
     userName = '';
+    offlineMessage = "";
 
     loading = false;
     success = false;
@@ -21,15 +23,26 @@ export class CreateUserComponent {
     generatedAvatar = '';
     showToaster = false;
 
-    constructor(private userService: UserService, private router: Router) {
+    isOnline = false;
+
+    constructor(private userService: UserService, private router: Router, private formSubmissionService: FormSubmissionService) {
         this.generateNewAvatar();
+        // Listen to online/offline events
+        window.addEventListener('online', () => {
+            this.isOnline = true;
+            this.formSubmissionService.retryPendingSubmissions();
+        });
+
+        window.addEventListener('offline', () => {
+            this.isOnline = false;
+        });
     }
 
     generateNewAvatar() {
         this.generatedAvatar = this.userService.generateRandomAvatar();
     }
 
-    onSubmit() {
+    async onSubmit(): Promise<void> {
         if (!this.userName.trim()) {
             this.error = 'Name is required';
             return;
@@ -45,27 +58,27 @@ export class CreateUserComponent {
             createdAt: new Date().toISOString(),
             id: Math.floor(Math.random() * 1000)
         };
-
-        this.userService.createUser(userData).subscribe({
-            next: (response) => {
-                this.loading = false;
-                this.success = true;
-                this.showToaster = true;
+        try {
+            const result = await this.formSubmissionService.submitForm(userData);
+            if (result.offline) {
+                this.offlineMessage = 'Form saved offline. Will submit when connection is restored.';
                 this.userName = '';
                 this.generateNewAvatar();
-                console.log('User created successfully:', response);
-
-                // Show toaster for 2 seconds then redirect
+            } else {
+                this.offlineMessage = 'Form submitted successfully!';
+                this.userName = '';
+                this.generateNewAvatar();
                 setTimeout(() => {
                     this.router.navigate(['/']);
                 }, 2000);
-            },
-            error: (error) => {
-                this.loading = false;
-                this.error = 'Failed to create user';
-                console.error('Error creating user:', error);
             }
-        });
+        } catch (error) {
+            this.loading = false;
+            this.error = 'Failed to create user';
+            console.error('Error creating user:', error);
+        } finally {
+            this.loading = false;
+        }
     }
 
     resetForm() {
