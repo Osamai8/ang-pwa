@@ -1,0 +1,37 @@
+<div class="user-list-container">
+  <div class="header">
+    <h1>Users</h1>
+    <button routerLink="/create-user" class="create-btn">
+      Create New User
+    </button>
+  </div>
+
+  <div class="content">
+    <div *ngIf="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Loading users...</p>
+    </div>
+
+    <div *ngIf="error" class="error">
+      <p>{{ error }}</p>
+      <button (click)="loadUsers()" class="retry-btn">Retry</button>
+    </div>
+
+    <div *ngIf="!loading && !error && users.length === 0" class="empty">
+      <p>No users found</p>
+    </div>
+
+    <div *ngIf="!loading && !error && users.length > 0" class="users-grid">
+      <div *ngFor="let user of users" class="user-card">
+        <div class="user-avatar">
+          <img [src]="user.avatar" [alt]="user.name" />
+        </div>
+        <div class="user-info">
+          <h3>{{ user.name }}</h3>
+          <p class="user-id">ID: {{ user.id }}</p>
+          <p class="user-date">Created: {{ formatDate(user.createdAt) }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

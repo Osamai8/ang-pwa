@@ -1,0 +1,86 @@
+<div class="create-user-container">
+  <div class="header">
+    <h1>Create New User</h1>
+    <button routerLink="/" class="back-btn">← Back to Users</button>
+  </div>
+
+  <div class="form-container">
+    <form (ngSubmit)="onSubmit()" #userForm="ngForm">
+      <div class="form-group">
+        <label for="name">Name *</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          [(ngModel)]="userName"
+          required
+          placeholder="Enter user name"
+          class="form-input"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="avatar-section">
+        <label>Avatar Preview</label>
+        <div class="avatar-container">
+          <img
+            [src]="generatedAvatar"
+            alt="Generated Avatar"
+            class="avatar-preview"
+          />
+          <button
+            type="button"
+            (click)="generateNewAvatar()"
+            class="regenerate-btn"
+            [disabled]="loading"
+          >
+            Generate New Avatar
+          </button>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="submit-btn"
+          [disabled]="loading || !userName || userName.trim() === ''"
+        >
+          <span *ngIf="loading" class="spinner-small"></span>
+          {{ loading ? "Creating..." : "Create User" }}
+        </button>
+        <button
+          type="button"
+          (click)="resetForm()"
+          class="reset-btn"
+          [disabled]="loading"
+        >
+          Reset
+        </button>
+      </div>
+    </form>
+
+    <div *ngIf="success" class="success-message">
+      <div class="success-icon">✓</div>
+      <h3>User Created Successfully!</h3>
+      <p>The user has been created with a random avatar.</p>
+      <button routerLink="/" class="view-users-btn">View All Users</button>
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      <div class="error-icon">✗</div>
+      <p>{{ error }}</p>
+    </div>
+  </div>
+
+  <!-- Success Toaster -->
+  <div *ngIf="showToaster" class="toaster">
+    <div class="toaster-content">
+      <div class="toaster-icon">✓</div>
+      <div class="toaster-text">
+        <h4>User Created Successfully!</h4>
+        <p>Redirecting to user list...</p>
+      </div>
+      <button (click)="dismissToaster()" class="toaster-close">×</button>
+    </div>
+  </div>
+</div>
