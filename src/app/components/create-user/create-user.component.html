@@ -1,8 +1,17 @@
 <div class="create-user-container">
   <div class="header">
     <h1>Create New User</h1>
-    <button routerLink="/" class="back-btn">← Back to Users</button>
-    <p>{{ isOnline ? "Online" : "Offline" }}</p>
+    <div class="header-actions">
+      <div
+        class="status-badge"
+        [class.online]="isOnline"
+        [class.offline]="!isOnline"
+      >
+        <span class="status-indicator"></span>
+        <span class="status-text">{{ isOnline ? "Online" : "Offline" }}</span>
+      </div>
+      <button routerLink="/" class="back-btn">← Back to Users</button>
+    </div>
   </div>
 
   <div class="form-container">
@@ -67,19 +76,43 @@
       <button routerLink="/" class="view-users-btn">View All Users</button>
     </div>
 
+    <div *ngIf="offlineMessage" class="offline-message">
+      <div class="offline-icon">📡</div>
+      <p>{{ offlineMessage }}</p>
+    </div>
+
     <div *ngIf="error" class="error-message">
       <div class="error-icon">✗</div>
       <p>{{ error }}</p>
     </div>
   </div>
 
-  <!-- Success Toaster -->
+  <!-- Toaster -->
   <div *ngIf="showToaster" class="toaster">
-    <div class="toaster-content">
-      <div class="toaster-icon">✓</div>
+    <div
+      class="toaster-content"
+      [class.toaster-success]="toasterType === 'success'"
+      [class.toaster-offline]="toasterType === 'offline'"
+    >
+      <div class="toaster-icon">
+        {{ toasterType === "success" ? "✓" : "📡" }}
+      </div>
       <div class="toaster-text">
-        <h4>User Created Successfully!</h4>
-        <p>Redirecting to user list...</p>
+        <h4>
+          {{
+            toasterType === "success"
+              ? "User Created Successfully!"
+              : "Form Saved Offline"
+          }}
+        </h4>
+        <p>
+          {{
+            offlineMessage ||
+              (toasterType === "success"
+                ? "Redirecting to user list..."
+                : "Will submit when connection is restored.")
+          }}
+        </p>
       </div>
       <button (click)="dismissToaster()" class="toaster-close">×</button>
     </div>

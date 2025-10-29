@@ -22,17 +22,18 @@ export class CreateUserComponent {
     error: string | null = null;
     generatedAvatar = '';
     showToaster = false;
+    toasterType: 'success' | 'offline' = 'success';
 
-    isOnline = false;
+    isOnline = navigator.onLine;
 
     constructor(private userService: UserService, private router: Router, private formSubmissionService: FormSubmissionService) {
         this.generateNewAvatar();
-        // Listen to online/offline events
+        // Initialize online status
+        this.isOnline = navigator.onLine;
         window.addEventListener('online', () => {
             this.isOnline = true;
             this.formSubmissionService.retryPendingSubmissions();
         });
-
         window.addEventListener('offline', () => {
             this.isOnline = false;
         });
@@ -51,6 +52,7 @@ export class CreateUserComponent {
         this.loading = true;
         this.error = null;
         this.success = false;
+        this.offlineMessage = '';
 
         const userData: CreateUserRequest = {
             name: this.userName.trim(),
@@ -62,21 +64,25 @@ export class CreateUserComponent {
             const result = await this.formSubmissionService.submitForm(userData);
             if (result.offline) {
                 this.offlineMessage = 'Form saved offline. Will submit when connection is restored.';
+                this.toasterType = 'offline';
+                this.showToaster = true;
                 this.userName = '';
                 this.generateNewAvatar();
             } else {
                 this.offlineMessage = 'Form submitted successfully!';
+                this.toasterType = 'success';
+                this.showToaster = true;
                 this.userName = '';
                 this.generateNewAvatar();
                 setTimeout(() => {
                     this.router.navigate(['/']);
                 }, 2000);
             }
+
         } catch (error) {
-            this.loading = false;
             this.error = 'Failed to create user';
-            console.error('Error creating user:', error);
-        } finally {
+        }
+        finally {
             this.loading = false;
         }
     }
@@ -87,10 +93,14 @@ export class CreateUserComponent {
         this.error = null;
         this.success = false;
         this.showToaster = false;
+        this.offlineMessage = '';
     }
 
     dismissToaster() {
         this.showToaster = false;
-        this.router.navigate(['/']);
+        this.offlineMessage = '';
+        if (this.toasterType === 'success') {
+            this.router.navigate(['/']);
+        }
     }
 }

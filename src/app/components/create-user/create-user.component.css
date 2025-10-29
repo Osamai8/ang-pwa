@@ -13,6 +13,12 @@
     border-bottom: 2px solid #e0e0e0;
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
 .header h1 {
     color: #333;
     margin: 0;
@@ -34,6 +40,76 @@
 
 .back-btn:hover {
     background: #545b62;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.status-badge.online {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-badge.offline {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-badge.online .status-indicator {
+    background: #28a745;
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    animation: pulse 2s infinite;
+}
+
+.status-badge.offline .status-indicator {
+    background: #dc3545;
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    animation: pulseOffline 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 4px rgba(40, 167, 69, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+}
+
+@keyframes pulseOffline {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 4px rgba(220, 53, 69, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
 }
 
 .form-container {
@@ -235,6 +311,26 @@
     background: #218838;
 }
 
+.offline-message {
+    text-align: center;
+    padding: 20px;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.offline-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.offline-message p {
+    color: #856404;
+    margin: 0;
+    font-weight: 500;
+}
+
 .error-message {
     text-align: center;
     padding: 20px;
@@ -277,6 +373,15 @@
     max-width: 400px;
 }
 
+.toaster-content.toaster-success {
+    background: #28a745;
+}
+
+.toaster-content.toaster-offline {
+    background: #ffc107;
+    color: #856404;
+}
+
 .toaster-icon {
     font-size: 1.5rem;
     font-weight: bold;
@@ -306,6 +411,10 @@
     transition: opacity 0.2s;
 }
 
+.toaster-content.toaster-offline .toaster-close {
+    color: #856404;
+}
+
 .toaster-close:hover {
     opacity: 1;
 }
@@ -327,6 +436,11 @@
         flex-direction: column;
         gap: 15px;
         text-align: center;
+    }
+
+    .header-actions {
+        flex-direction: column;
+        width: 100%;
     }
 
     .header h1 {
