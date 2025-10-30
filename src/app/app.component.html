@@ -1,1 +1,14 @@
+<div class="app-status-wrapper">
+  <div
+    class="status-badge"
+    [class.online]="(isOnline$ | async) === true"
+    [class.offline]="(isOnline$ | async) === false"
+  >
+    <span class="status-indicator"></span>
+    <span class="status-text">{{
+      (isOnline$ | async) ? "Online" : "Offline"
+    }}</span>
+  </div>
+</div>
+
 <router-outlet />

@@ -2,14 +2,6 @@
   <div class="header">
     <h1>Create New User</h1>
     <div class="header-actions">
-      <div
-        class="status-badge"
-        [class.online]="isOnline"
-        [class.offline]="!isOnline"
-      >
-        <span class="status-indicator"></span>
-        <span class="status-text">{{ isOnline ? "Online" : "Offline" }}</span>
-      </div>
       <button routerLink="/" class="back-btn">← Back to Users</button>
     </div>
   </div>

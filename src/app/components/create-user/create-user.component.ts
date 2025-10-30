@@ -5,6 +5,8 @@ import { RouterModule, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { CreateUserRequest } from '../../models/user.model';
 import { FormSubmissionService } from '../../services/form-submission.service';
+import { NetworkService } from '../../services/network.service';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-create-user',
@@ -24,19 +26,11 @@ export class CreateUserComponent {
     showToaster = false;
     toasterType: 'success' | 'offline' = 'success';
 
-    isOnline = navigator.onLine;
+    isOnline$!: Observable<boolean>;
 
-    constructor(private userService: UserService, private router: Router, private formSubmissionService: FormSubmissionService) {
+    constructor(private userService: UserService, private router: Router, private formSubmissionService: FormSubmissionService, private networkService: NetworkService) {
         this.generateNewAvatar();
-        // Initialize online status
-        this.isOnline = navigator.onLine;
-        window.addEventListener('online', () => {
-            this.isOnline = true;
-            this.formSubmissionService.retryPendingSubmissions();
-        });
-        window.addEventListener('offline', () => {
-            this.isOnline = false;
-        });
+        this.isOnline$ = this.networkService.isOnline$;
     }
 
     generateNewAvatar() {

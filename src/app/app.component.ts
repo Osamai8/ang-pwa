@@ -1,20 +1,26 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
 import { SwUpdate } from '@angular/service-worker';
+import { NetworkService } from './services/network.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, AsyncPipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
   title = 'ang-pwa';
-  constructor(private swUpdate: SwUpdate) {
+  isOnline$!: Observable<boolean>;
+  constructor(private swUpdate: SwUpdate, private networkService: NetworkService) {
 
   }
   ngOnInit() {
+    this.networkService.init();
+    this.isOnline$ = this.networkService.isOnline$;
     this.requestNotificationPermission();
     this.checkForUpdates();
   }
